@@ -81,9 +81,9 @@ class DataLoader(object):
     return self._merged(positive_reviews, negative_reviews)
 
   def _merged(self, dataset1, dataset2):
-    dataset1.append(dataset2, ignore_index=True)
-    dataset1['ratings'] = dataset1['ratings'].astype('category')
-    return dataset1
+    df = dataset1.append(dataset2, ignore_index=True)
+    df['ratings'] = df['ratings'].astype('category')
+    return df
 
   def _read_reviews(self, directory, subdir, leafdir, randomize, limit):
 

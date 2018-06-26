@@ -5,6 +5,7 @@ import argparse
 import logging
 import random
 from data_utils import DataLoader
+import numpy as np
 
 #######
 
@@ -57,7 +58,44 @@ logging.debug(training_data.head(2))
 
 logging.debug('tail data set')
 logging.debug(training_data.tail(2))
-# # show samples for debugging
-# for i in range(args.num_records):
-# logging.info(f"sample review {training_data.data[i][:200]}, ratings
-# {training_data.ratings[i]}, sentiment {training_data.sentiments[i]}")
+
+# TODO(Abdul) - plot the bar graph of positive and negative reviews
+
+# show a bar of total positive and negative reviews
+
+#title = "Training Data"
+# x-tick-labels = [negative, positive]
+# xlabel = "kind of reviews"
+# ylabel = "Count"
+
+# Refer to this for code -
+# https://matplotlib.org/gallery/statistics/barchart_demo.html
+
+sentiments = np.array(training_data['sentiments'])
+count_negative_reviews = (sentiments == False).sum()
+count_positive_reviews = (sentiments == True).sum()
+logging.debug('counts neg {} and pos {}'.format(
+    count_negative_reviews, count_positive_reviews))
+
+# TODO(Abdul) - plot the bar graph of avg length of review, avg length of
+# positive and avg length of negative reviews
+training_data['review_length'] = training_data['data'].str.len()
+
+positive_reviews_df = training_data.loc[
+    lambda df: df.sentiments == True]
+logging.debug('positive review df')
+logging.debug(positive_reviews_df.head())
+
+negative_reviews_df = training_data.loc[
+    lambda df: df.sentiments == False]
+logging.debug('negative review df')
+logging.debug(negative_reviews_df.head())
+
+avg_length = training_data['review_length'].mean()
+avg_positive_length = positive_reviews_df['review_length'].mean()
+avg_negative_length = negative_reviews_df['review_length'].mean()
+logging.debug('length avg {}, positive {} and negative {} '.format(
+    avg_length, avg_positive_length, avg_negative_length))
+
+
+# Run the bayesian classifier on training data
