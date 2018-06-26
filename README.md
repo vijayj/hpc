@@ -35,6 +35,13 @@ numpy, pandas, scipy, matplotlib
 1. Show report
 1.(abdul) Plot accuracy of each CV.
 
+1. Run GBT
+2. Show report
+3. (abdu) plot accuracy of model
+
+
+## Future
+Use ratings category instead of boolean for classification
 
 
 

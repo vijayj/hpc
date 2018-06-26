@@ -70,13 +70,14 @@ class DataLoader(object):
     A panda data frame
     """
 
-    half_limit = math.ceil(limit / 2)
+    pos_limit = math.ceil(limit / 2) if limit != -1 else limit
     positive_reviews = self._read_reviews(
-        directory, subdir, 'pos', randomize, half_limit)
+        directory, subdir, 'pos', randomize, pos_limit)
     # Create a data frame or data bag
 
+    neg_limit = limit - pos_limit if limit != -1 else limit
     negative_reviews = self._read_reviews(
-        directory, subdir, 'neg', randomize, limit - half_limit)
+        directory, subdir, 'neg', randomize, neg_limit)
 
     return self._merged(positive_reviews, negative_reviews)
 
@@ -93,7 +94,7 @@ class DataLoader(object):
     except FileNotFoundError as fnf:
       self.logging.info(
           "returning empty as directory path is invalid {}".format(review_dir))
-      return pd.DataFrame(columns=['data', 'ratings', 'sentiment'])
+      return pd.DataFrame(columns=['data', 'ratings', 'sentiments'])
 
     try:
       # shuffling the order of the files..
@@ -134,7 +135,7 @@ class DataLoader(object):
     except FileNotFoundError as fnf:
       self.logging.info(
           "failed to process file {}".format(filename))
-      return pd.DataFrame(columns=['data', 'ratings', 'sentiment'])
+      return pd.DataFrame(columns=['data', 'ratings', 'sentiments'])
 
   def _get_ratings(self, filename):
       # the file name is of the form 12260_10.txt
