@@ -2,10 +2,8 @@ import os
 import random
 import math
 
-# logging.level = logging.DEBUG
 
-# copied from scikit learn
-
+# Bunch class is copied from scikit learn
 
 class Bunch(dict):
   """Container object for datasets
