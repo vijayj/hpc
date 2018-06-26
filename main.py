@@ -46,6 +46,18 @@ if args.file is None:
 training_data = DataLoader(logging).load_data(
     args.file, 'train', limit=int(args.num_records), randomize=True)
 
-# show samples for debugging
-for i in range(args.num_records):
-  logging.info(f"sample review {training_data.data[i][:200]}, ratings {training_data.ratings[i]}, sentiment {training_data.sentiments[i]}")
+logging.info('describe data')
+logging.info(training_data.describe())
+
+logging.info('describe types')
+logging.info(training_data.dtypes)
+
+logging.debug('head data set')
+logging.debug(training_data.head(2))
+
+logging.debug('tail data set')
+logging.debug(training_data.tail(2))
+# # show samples for debugging
+# for i in range(args.num_records):
+# logging.info(f"sample review {training_data.data[i][:200]}, ratings
+# {training_data.ratings[i]}, sentiment {training_data.sentiments[i]}")

@@ -1,59 +1,62 @@
 import os
 import random
 import math
+import pandas as pd
 
 
-# Bunch class is copied from scikit learn
+# # Bunch class is copied from scikit learn
 
-class Bunch(dict):
-  """Container object for datasets
+# class Bunch(dict):
+#   """Container object for datasets
 
-  Dictionary-like object that exposes its keys as attributes.
+#   Dictionary-like object that exposes its keys as attributes.
 
-  >>> b = Bunch(a=1, b=2)
-  >>> b['b']
-  2
-  >>> b.b
-  2
-  >>> b.a = 3
-  >>> b['a']
-  3
-  >>> b.c = 6
-  >>> b['c']
-  6
+#   >>> b = Bunch(a=1, b=2)
+#   >>> b['b']
+#   2
+#   >>> b.b
+#   2
+#   >>> b.a = 3
+#   >>> b['a']
+#   3
+#   >>> b.c = 6
+#   >>> b['c']
+#   6
 
-  """
+#   """
 
-  def __init__(self, **kwargs):
-    super(Bunch, self).__init__(kwargs)
+#   def __init__(self, **kwargs):
+#     super(Bunch, self).__init__(kwargs)
 
-  def __setattr__(self, key, value):
-    self[key] = value
+#   def __setattr__(self, key, value):
+#     self[key] = value
 
-  def __dir__(self):
-    return self.keys()
+#   def __dir__(self):
+#     return self.keys()
 
-  def __getattr__(self, key):
-    try:
-      return self[key]
-    except KeyError:
-      raise AttributeError(key)
+#   def __getattr__(self, key):
+#     try:
+#       return self[key]
+#     except KeyError:
+#       raise AttributeError(key)
 
-  def __setstate__(self, state):
-    # Bunch pickles generated with scikit-learn 0.16.* have an non
-    # empty __dict__. This causes a surprising behaviour when
-    # loading these pickles scikit-learn 0.17: reading bunch.key
-    # uses __dict__ but assigning to bunch.key use __setattr__ and
-    # only changes bunch['key']. More details can be found at:
-    # https://github.com/scikit-learn/scikit-learn/issues/6196.
-    # Overriding __setstate__ to be a noop has the effect of
-    # ignoring the pickled __dict__
-    pass
+#   def __setstate__(self, state):
+#     # Bunch pickles generated with scikit-learn 0.16.* have an non
+#     # empty __dict__. This causes a surprising behaviour when
+#     # loading these pickles scikit-learn 0.17: reading bunch.key
+#     # uses __dict__ but assigning to bunch.key use __setattr__ and
+#     # only changes bunch['key']. More details can be found at:
+#     # https://github.com/scikit-learn/scikit-learn/issues/6196.
+#     # Overriding __setstate__ to be a noop has the effect of
+#     # ignoring the pickled __dict__
+#     pass
 
 
 class DataLoader(object):
 
   def __init__(self, logger):
+    # TODO(VJ) - different and better structure for logging - maybe a central
+    # class ?
     self.logging = logger
 
   def load_data(self, directory, subdir, randomize=False, limit=-1):
@@ -62,6 +65,9 @@ class DataLoader(object):
     Keyword arguments:
     limit: Has controls to limit how many files to read, default -1 to read all
     randomize: To help read reviews in random order, default False
+
+    Returns:
+    A panda data frame
     """
 
     half_limit = math.ceil(limit / 2)
@@ -75,9 +81,8 @@ class DataLoader(object):
     return self._merged(positive_reviews, negative_reviews)
 
   def _merged(self, dataset1, dataset2):
-    dataset1.data.extend(dataset2.data)
-    dataset1.ratings.extend(dataset2.ratings)
-    dataset1.sentiments.extend(dataset2.sentiments)
+    dataset1.append(dataset2, ignore_index=True)
+    dataset1['ratings'] = dataset1['ratings'].astype('category')
     return dataset1
 
   def _read_reviews(self, directory, subdir, leafdir, randomize, limit):
@@ -88,7 +93,7 @@ class DataLoader(object):
     except FileNotFoundError as fnf:
       self.logging.info(
           "returning empty as directory path is invalid {}".format(review_dir))
-      return Bunch()
+      return pd.DataFrame(columns=['data', 'ratings', 'sentiment'])
 
     try:
       # shuffling the order of the files..
@@ -113,18 +118,25 @@ class DataLoader(object):
           texts.append(text)
           rating = self._get_ratings(filename)
           ratings.append(rating)
-          if int(rating) <= 4:
+          if rating <= 4:
             sentiments.append(False)
-          elif int(rating) >= 7:
+          elif rating >= 7:
             sentiments.append(True)
 
-      return Bunch(data=texts, ratings=ratings, sentiments=sentiments)
+      df = pd.DataFrame({
+          'data': texts,
+          # 'ratings': pd.Series(ratings, dtype='category'),
+          'ratings': pd.Series(ratings, dtype='category'),
+          'sentiments': pd.Series(sentiments, dtype='bool'),
+      })
+      return df
+      # return Bunch(data=texts, ratings=ratings, sentiments=sentiments)
     except FileNotFoundError as fnf:
       self.logging.info(
           "failed to process file {}".format(filename))
-      return Bunch()
+      return pd.DataFrame(columns=['data', 'ratings', 'sentiment'])
 
   def _get_ratings(self, filename):
       # the file name is of the form 12260_10.txt
       # re.match('\w+_(\w+)\.txt','12260_10.txt')[1]
-    return filename.split('_')[1].split('.')[0]
+    return int(filename.split('_')[1].split('.')[0])
