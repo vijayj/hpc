@@ -44,7 +44,7 @@ if args.file is None:
 
 
 training_data = DataLoader(logging).load_data(
-    args.file, 'train', limit=int(args.num_records))
+    args.file, 'train', limit=int(args.num_records), randomize=True)
 
 # show samples for debugging
 for i in range(args.num_records):

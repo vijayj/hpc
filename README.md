@@ -19,6 +19,23 @@ numpy, pandas, scipy, matplotlib
 *Architecture*
 
 
+*Steps to do*
+1. Load the training set.
+1. (abdul) Bar total positive and negative reviews
+1. (abdul) Simple ?? in matplot average length of movie review, negative and positive review (we have 3 values - how to show ?)
+
+1. Run a bayesian model
+1. Show reporting accuracy
+(abdul) Plot for a sample of 100 test reviews, our model calculation vs actual
+
+1. Run a SVD
+1. Show reporting accuracy
+
+1. Run CV
+1. Show report
+1.(abdul) Plot accuracy of each CV.
+
+
 
 
 
