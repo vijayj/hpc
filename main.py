@@ -47,11 +47,11 @@ dataLoader = DataLoader(logging)
 training_data = dataLoader.load_data(
     args.file, 'train', limit=int(args.num_records), randomize=True)
 
-logging.info('*************** describe data ***************\n')
+logging.info('*************** describe data ***************')
 logging.info(training_data.describe())
 
-logging.info('*************** describe types ***************\n')
-logging.info(training_data.dtypes)
+logging.info('*************** describe types *************** \n {0}'.format(
+             training_data.dtypes))
 
 logging.debug('head data set')
 logging.debug(training_data.head(2))
@@ -98,6 +98,8 @@ logging.info('training set: length avg {}, positive {} and negative {} '.format(
     avg_length, avg_positive_length, avg_negative_length))
 
 
+# TODO(VJ) - cleanup - move models into different files
+
 # Run the bayesian classifier on training data
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer
@@ -111,8 +113,8 @@ bayesian_review_classifier = Pipeline([
     ('clf', MultinomialNB())
 ])
 
-# Train the model
-model = bayesian_review_classifier.fit(
+# Train the bayesian_model
+bayesian_model = bayesian_review_classifier.fit(
     training_data.data, training_data.sentiments)
 
 # Test accuracy
@@ -121,9 +123,44 @@ test_df = dataLoader.load_data(
 print(test_df.head())
 print(test_df.tail())
 
-predictions = model.predict(test_df.data)
-print("Accurancy : ", np.mean(predictions == test_df.sentiments))
+predictions = bayesian_model.predict(test_df.data)
+print("Accurancy (bayes model): ", np.mean(predictions ==
+                                           test_df.sentiments))
 
+# Let's now try and do ratings as category instead of just booleans
+# We will use a SVM and encode the ratings category so that we can use SVM
+# The results of predictions will have to be decoded to the ratings...
+# Train a SVM
+from sklearn.linear_model import SGDClassifier
+svm_model = Pipeline([
+    ('vect', CountVectorizer()),
+    ('tfidf', TfidfTransformer()),
+    ('clf', SGDClassifier(
+        loss='hinge',
+        penalty='l2',
+        alpha=1e-3,
+        random_state=42,
+        max_iter=5,
+        tol=None))
+])
+svm_model.fit(training_data.data, training_data.sentiments)
+predicted = svm_model.predict(test_df.data)
+np.mean(predicted == test_df.sentiments)
+print("Accurancy (svm model): ", np.mean(predicted == test_df.sentiments))
+
+from sklearn import metrics
+print('***svm report***')
+print(metrics.classification_report(test_df.sentiments,
+                                    predicted,
+                                    target_names=['True', 'False']))
+
+# print('***confusion matrix***')
+# print(metrics.confusion_matrix(test_df.sentiments, predicted))
+
+
+# logging.info('doing cross validation with grid search to optimize svm model')
+####
+# Testing with adhoc reviews from IMDB - for movie black panther
 # store the model and try with some other reviews
 
 r1 = '''
@@ -160,5 +197,14 @@ r2 = '''
 This film is amazing watched in imax 3d. I watch most comic book movies this way for the last ten years,black panther is on another level for a standalone film the action affects story pacing brilliant never bored once. I wanted to watch it straight away again the only better marvel movie is the original avengers and logan but that isn't really marvel. Trust me don't listen to all the haters and watch this film I'm going to watch it again and I haven't done that with a film since the matrix enough said long live the KING.
 '''
 
-predictions_e = model.predict([r1, r2])
-print("Accurancy : ", predictions_e)
+docs_new = [r1, r2]
+predictions_b = bayesian_model.predict(docs_new)
+predictions_svm = svm_model.predict(docs_new)
+
+print("**** Bayes *****\n")
+for doc, category in zip(docs_new, predictions_b):
+  print(f"{doc[:100]} => {category}")
+
+print("**** SVM *****\n")
+for doc, category in zip(docs_new, predictions_svm):
+  print(f"{doc[:100]} => {category}")
