@@ -128,12 +128,11 @@ if(args.interactive):
 predictions = m.predict(test_df.data)
 
 # Analyse efficacy of the model
-Grapher().show_lines(["Actual", "Predicted"],
-                     [test_df.sentiments, predictions],
-                     xaxislabel='',
-                     yaxislabel='predictions',
-                     title='Accuracy')
 m.analysis(test_df.sentiments, predictions)
+Grapher().show_lines({'actual': test_df.sentiments, 'predicted': predictions},
+                     xaxislabel='number of reviews',
+                     yaxislabel='prediction mismatches',
+                     title='Bayesian Accuracy')
 
 
 print('******* Generating a SVM*****************')
@@ -145,6 +144,11 @@ svm_model.train(training_data.data, training_data.sentiments)
 predictions = svm_model.predict(test_df.data)
 # analyze efficiency
 svm_model.analysis(test_df.sentiments, predictions)
+
+Grapher().show_lines({'actual': test_df.sentiments, 'predicted': predictions},
+                     xaxislabel='',
+                     yaxislabel='prediction mismatch',
+                     title='SVM Accuracy')
 
 
 print('lets do some adhoc testing')

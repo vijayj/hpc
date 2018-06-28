@@ -31,7 +31,11 @@ class Grapher(object):
     fig.tight_layout()
     plt.show()
 
-  def show_lines(self, xlabels, yvalues, xaxislabel='', yaxislabel='', title=''):
+  def show_lines(self, predictions_map, xaxislabel='', yaxislabel='', title=''):
+    '''
+    Shows the delta between predicted and actual using dots
+
+    '''
     fig, ax = plt.subplots()
 
     opacity = 0.8
@@ -39,21 +43,30 @@ class Grapher(object):
     colors = ['g', 'r', 'b', 'c', 'm']
     markers = ['o']
     styles = [':', '--', '-.', '-']
-    for i, xlabel in enumerate(xlabels):
-      yvals = []
-      # map boolean to numbers
-      for val in yvalues[i]:
-        yvals.append(10 if val else 5)
 
-      c = random.sample(colors, 1)[0]
-      m = random.sample(markers, 1)[0]
-      s = random.sample(styles, 1)[0]
-      plt.plot(np.arange(len(yvals)), yvals, c + m + s, linewidth=1,
-               markersize=4, alpha=0.5, label=xlabel)
+    # compare 2 arrays for their differences
+    diff = predictions_map['actual'] == predictions_map['predicted']
 
-    plt.grid()
+    # change values to integer for plotting
+    match_val = 0
+    non_match_val = 1
+    diff_to_integer = [match_val if val else non_match_val for val in diff]
 
+    c = random.sample(colors, 1)[0]
+    m = random.sample(markers, 1)[0]
+    s = random.sample(styles, 1)[0]
+
+    ax.semilogx(np.arange(len(diff_to_integer)),
+                diff_to_integer, c + m, markersize=2, alpha=0.8, label='top dots show prediction mismatch')
+
+    plt.text(2, 0.5, 'total errors {0}'.format((diff == False).sum()),
+             horizontalalignment='center',
+             verticalalignment='top',
+             multialignment='center')
+
+    plt.xlabel(xaxislabel + '  total: ({0})'.format(len(diff_to_integer)))
     plt.ylabel(yaxislabel)
-    plt.legend(loc='upper right')
+    plt.legend(loc='best', fancybox=True, framealpha=0.5)
+    plt.title(title)
     plt.tight_layout()
     plt.show()
