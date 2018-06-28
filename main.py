@@ -8,6 +8,7 @@ from data_utils import DataLoader
 from models import Model
 import numpy as np
 from adhoc_testing import adhoc_test
+from graph import Grapher
 
 #######
 
@@ -83,6 +84,13 @@ count_positive_reviews = (sentiments == True).sum()
 logging.info('training set:  neg reviews {} and pos reviews {}'.format(
     count_negative_reviews, count_positive_reviews))
 
+Grapher().show_bar(["Negative", "Positive"],
+                   [count_negative_reviews, count_positive_reviews],
+                   xaxislabel='Sentiments',
+                   yaxislabel='Count of reviews',
+                   title='Movie review sentiments')
+
+
 if(args.interactive):
   input()
 
@@ -106,6 +114,13 @@ avg_negative_length = negative_reviews_df['review_length'].mean()
 logging.info('training set: length avg {}, positive {} and negative {} '.format(
     avg_length, avg_positive_length, avg_negative_length))
 
+Grapher().show_bar(["Avg length", "Avg negative review", "Avg positive review"],
+                   [avg_length, avg_negative_length,  avg_positive_length],
+                   xaxislabel='',
+                   yaxislabel='Number of words',
+                   title='Movie review length')
+
+
 print('******* Generating a Bayesian model*****************')
 m = Model(name='bayes')
 m.train(training_data.data, training_data.sentiments)
@@ -126,6 +141,11 @@ predictions = m.predict(test_df.data)
 
 # Analyse efficacy of the model
 # TODO(Abdul) - make a line graph of predictions vs ground truth
+Grapher().show_lines(["Actual", "Predicted"],
+                     [test_df.sentiments, predictions],
+                     xaxislabel='',
+                     yaxislabel='predictions',
+                     title='Accuracy')
 m.analysis(test_df.sentiments, predictions)
 
 
