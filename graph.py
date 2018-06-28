@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 import random
 import numpy as np
 
+##################
+# This class encapsulates graph related functions
+##################
+
 
 class Grapher(object):
 
@@ -28,7 +32,6 @@ class Grapher(object):
     plt.show()
 
   def show_lines(self, xlabels, yvalues, xaxislabel='', yaxislabel='', title=''):
-    return
     fig, ax = plt.subplots()
 
     opacity = 0.8
@@ -50,12 +53,7 @@ class Grapher(object):
 
     plt.grid()
 
-    # rects = ax.bar(xlabel, yvalues[i], bar_width,
-    # alpha=opacity, color=random.sample(colors, 1), label=xlabel)
-
     plt.ylabel(yaxislabel)
     plt.legend(loc='upper right')
-    # ax.set_xticks(np.arange(0, len(xlabels)))
-    # ax.set_xticklabels(xlabels)
     plt.tight_layout()
     plt.show()

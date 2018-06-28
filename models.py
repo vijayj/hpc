@@ -59,5 +59,3 @@ class Model(object):
       print(metrics.classification_report(actual,
                                           predicted,
                                           target_names=['True', 'False']))
-
-      # Show the line plot here

@@ -37,17 +37,15 @@ logger = logging.getLogger('Sentiment Analysis')
 logging_level = logging.DEBUG if args.verbose else logging.INFO
 
 logging.basicConfig(level=logging_level)
-# logging.debug('This message should go to the log file')
-# logging.info('So should this')
-# logging.warning('And this, too')
-
-# format_string = "%(asctime)s %(filename)s:%(lineno)d %(funcName)s %(levelname)s %(name)s %(message)s"
-# logging.basicConfig(level=logging_level, format=format_string)
 
 if args.file is None:
   print('Need to pass the directory of reviews. Exiting...')
   parser.print_help()
   exit(-1)
+
+###
+# Load the data
+###
 
 dataLoader = DataLoader(logging)
 training_data = dataLoader.load_data(
@@ -67,6 +65,9 @@ logging.debug('tail data set')
 logging.debug(training_data.tail(2))
 
 
+#####
+# Calculate basic stats
+#####
 sentiments = np.array(training_data['sentiments'])
 count_negative_reviews = (sentiments == False).sum()
 count_positive_reviews = (sentiments == True).sum()
