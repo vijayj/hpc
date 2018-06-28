@@ -40,11 +40,4 @@ def adhoc_test(model):
   predictions = model.predict(docs_new)
   print("**** {} *****\n".format(model.name))
   for doc, category in zip(docs_new, predictions):
-    print(f"{doc[:100]} => {category}")
-
-  # predictions_svm = svm_model.predict(docs_new)
-
-
-# print("**** SVM *****\n")
-# for doc, category in zip(docs_new, predictions_svm):
-#   print(f"{doc[:100]} => {category}")
+    print(f"{doc[:150]}\n => {category}")

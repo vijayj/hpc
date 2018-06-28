@@ -66,17 +66,6 @@ logging.debug(training_data.head(2))
 logging.debug('tail data set')
 logging.debug(training_data.tail(2))
 
-# TODO(Abdul) - plot the bar graph of positive and negative reviews
-
-# show a bar of total positive and negative reviews
-
-# title = "Training Data"
-# x-tick-labels = [negative, positive]
-# xlabel = "kind of reviews"
-# ylabel = "Count"
-
-# Refer to this for code -
-# https://matplotlib.org/gallery/statistics/barchart_demo.html
 
 sentiments = np.array(training_data['sentiments'])
 count_negative_reviews = (sentiments == False).sum()
@@ -94,8 +83,6 @@ Grapher().show_bar(["Negative", "Positive"],
 if(args.interactive):
   input()
 
-# TODO(Abdul) - plot the bar graph of avg length of review, avg length of
-# positive and avg length of negative reviews
 training_data['review_length'] = training_data['data'].str.len()
 
 positive_reviews_df = training_data.loc[
@@ -140,7 +127,6 @@ if(args.interactive):
 predictions = m.predict(test_df.data)
 
 # Analyse efficacy of the model
-# TODO(Abdul) - make a line graph of predictions vs ground truth
 Grapher().show_lines(["Actual", "Predicted"],
                      [test_df.sentiments, predictions],
                      xaxislabel='',

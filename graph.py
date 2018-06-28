@@ -12,10 +12,12 @@ class Grapher(object):
     bar_width = 0.75
     opacity = 0.8
 
-    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+    colors = ['b', 'g', 'r', 'c', 'm']
+
+    selected_colors = random.sample(colors, len(xlabels))
     for i, xlabel in enumerate(xlabels):
       rects = ax.bar(xlabel, yvalues[i], bar_width,
-                     alpha=opacity, color=random.sample(colors, 1)[0], label=xlabel)
+                     alpha=opacity, color=selected_colors[i % len(xlabels)], label=xlabel)
 
     ax.set_xlabel(xaxislabel)
     ax.set_ylabel(yaxislabel)
@@ -31,7 +33,7 @@ class Grapher(object):
 
     opacity = 0.8
 
-    colors = ['g', 'r', 'b']
+    colors = ['g', 'r', 'b', 'c', 'm']
     markers = ['o']
     styles = [':', '--', '-.', '-']
     for i, xlabel in enumerate(xlabels):
@@ -40,7 +42,7 @@ class Grapher(object):
       for val in yvalues[i]:
         yvals.append(10 if val else 5)
 
-      c = colors[i % 2]  # random.sample(colors, 1)[0]
+      c = random.sample(colors, 1)[0]
       m = random.sample(markers, 1)[0]
       s = random.sample(styles, 1)[0]
       plt.plot(np.arange(len(yvals)), yvals, c + m + s, linewidth=1,

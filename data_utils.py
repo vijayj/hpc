@@ -79,7 +79,6 @@ class DataLoader(object):
           'sentiments': pd.Series(sentiments, dtype='bool'),
       })
       return df
-      # return Bunch(data=texts, ratings=ratings, sentiments=sentiments)
     except FileNotFoundError as fnf:
       self.logging.info(
           "failed to process file {}".format(filename))

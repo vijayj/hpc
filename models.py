@@ -55,7 +55,7 @@ class Model(object):
     print("Accurancy ({0} model): {1}".format(self.name, np.mean(actual ==
                                                                  predicted)))
 
-    if self.name == 'SVM':
+    if self.name == 'svm':
       print(metrics.classification_report(actual,
                                           predicted,
                                           target_names=['True', 'False']))
