@@ -4,59 +4,13 @@ import math
 import pandas as pd
 
 
-# # Bunch class is copied from scikit learn
-
-# class Bunch(dict):
-#   """Container object for datasets
-
-#   Dictionary-like object that exposes its keys as attributes.
-
-#   >>> b = Bunch(a=1, b=2)
-#   >>> b['b']
-#   2
-#   >>> b.b
-#   2
-#   >>> b.a = 3
-#   >>> b['a']
-#   3
-#   >>> b.c = 6
-#   >>> b['c']
-#   6
-
-#   """
-
-#   def __init__(self, **kwargs):
-#     super(Bunch, self).__init__(kwargs)
-
-#   def __setattr__(self, key, value):
-#     self[key] = value
-
-#   def __dir__(self):
-#     return self.keys()
-
-#   def __getattr__(self, key):
-#     try:
-#       return self[key]
-#     except KeyError:
-#       raise AttributeError(key)
-
-#   def __setstate__(self, state):
-#     # Bunch pickles generated with scikit-learn 0.16.* have an non
-#     # empty __dict__. This causes a surprising behaviour when
-#     # loading these pickles scikit-learn 0.17: reading bunch.key
-#     # uses __dict__ but assigning to bunch.key use __setattr__ and
-#     # only changes bunch['key']. More details can be found at:
-#     # https://github.com/scikit-learn/scikit-learn/issues/6196.
-#     # Overriding __setstate__ to be a noop has the effect of
-#     # ignoring the pickled __dict__
-#     pass
-
+##################
+# This class helps with loading of data from files
+##################
 
 class DataLoader(object):
 
   def __init__(self, logger):
-    # TODO(VJ) - different and better structure for logging - maybe a central
-    # class ?
     self.logging = logger
 
   def load_data(self, directory, subdir, randomize=False, limit=-1):
@@ -73,18 +27,12 @@ class DataLoader(object):
     pos_limit = math.ceil(limit / 2) if limit != -1 else limit
     positive_reviews = self._read_reviews(
         directory, subdir, 'pos', randomize, pos_limit)
-    # Create a data frame or data bag
 
     neg_limit = limit - pos_limit if limit != -1 else limit
     negative_reviews = self._read_reviews(
         directory, subdir, 'neg', randomize, neg_limit)
 
     return self._merged(positive_reviews, negative_reviews)
-
-  def _merged(self, dataset1, dataset2):
-    df = dataset1.append(dataset2, ignore_index=True)
-    df['ratings'] = df['ratings'].astype('category')
-    return df
 
   def _read_reviews(self, directory, subdir, leafdir, randomize, limit):
 
@@ -136,6 +84,11 @@ class DataLoader(object):
       self.logging.info(
           "failed to process file {}".format(filename))
       return pd.DataFrame(columns=['data', 'ratings', 'sentiments'])
+
+  def _merged(self, dataset1, dataset2):
+    df = dataset1.append(dataset2, ignore_index=True)
+    df['ratings'] = df['ratings'].astype('category')
+    return df
 
   def _get_ratings(self, filename):
       # the file name is of the form 12260_10.txt

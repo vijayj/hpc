@@ -6,14 +6,14 @@ In the future, we will implement some ideas from the paper http://ai.stanford.ed
 
 
 ## Packages to install
-numpy, pandas, scipy, matplotlib
+numpy, pandas, scipy, sklearn, matplotlib
 
 
 ## Steps to run
 1. Extract the aclImdb_v1.tar.gz to a directory. This contains dataset for movie reviews
 1. In the root directory, execute the code
-    python main.py -f <extracted_dir_path> 
-..* For eg: python  main.py  -f ./aclImdb/  -v -n 100
+    ```python main.py -f <extracted_dir_path> ```
+..* For eg: ```python  main.py  -f ./aclImdb/  -v -n 100```
 1. For actual usage - run python main.py --review 'review text' where review text 
 
 ## Architecture 
