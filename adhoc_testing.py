@@ -40,4 +40,5 @@ def adhoc_test(model):
   predictions = model.predict(docs_new)
   print("**** {} *****\n".format(model.name))
   for doc, category in zip(docs_new, predictions):
-    print(f"{doc[:150]}\n => {category}")
+    print("{0} \n=> {1}".format(doc[:150], category))
+    # print(f"{doc[:150]}\n => {category}")

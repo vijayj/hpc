@@ -8,6 +8,13 @@ In the future, we will implement some ideas from the paper http://ai.stanford.ed
 ## Packages to install
 numpy, pandas, scipy, sklearn, matplotlib
 
+python --version =Python 3.5.5
+numpy==1.14.3
+scipy==1.1.0
+matplotlib==2.2.2
+scikit-learn==0.19.1
+
+
 
 ## Steps to run
 1. Extract the aclImdb_v1.tar.gz to a directory. This contains dataset for movie reviews
